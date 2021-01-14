@@ -29,6 +29,7 @@ class dataset_single(data.Dataset):
     img = Image.open(img_name).convert('RGB')
     img = self.transforms(img)
     if input_dim == 1:
+      # rgb to grey, then unsqueeze the first dimension. The result shape is [1,C,H,W]
       img = img[0, ...] * 0.299 + img[1, ...] * 0.587 + img[2, ...] * 0.114
       img = img.unsqueeze(0)
     return img
@@ -39,7 +40,7 @@ class dataset_single(data.Dataset):
 class dataset_unpair(data.Dataset):
   def __init__(self, opts):
     self.dataroot = opts.dataroot
-
+    # the splitting of two domain A and B is predefined
     # A
     images_A = os.listdir(os.path.join(self.dataroot, opts.phase + 'A'))
     self.A = [os.path.join(self.dataroot, opts.phase + 'A', x) for x in images_A]
