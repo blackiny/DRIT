@@ -287,6 +287,7 @@ class DRIT(nn.Module):
     return loss_D
 
   def update_EG(self):
+    '''
     # update G, Ec, Ea
     self.enc_c_opt.zero_grad()
     self.enc_a_opt.zero_grad()
@@ -301,6 +302,17 @@ class DRIT(nn.Module):
     self.gen_opt.zero_grad()
     self.backward_G_alone()
     self.enc_c_opt.step()
+    self.gen_opt.step()
+    '''
+    
+    #combine two steps
+    self.enc_c_opt.zero_grad()
+    self.enc_a_opt.zero_grad()
+    self.gen_opt.zero_grad()
+    self.backward_EG()
+    self.backward_G_alone()
+    self.enc_c_opt.step()
+    self.enc_a_opt.step()
     self.gen_opt.step()
 
   def backward_EG(self):
