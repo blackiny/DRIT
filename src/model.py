@@ -88,6 +88,7 @@ class DRIT(nn.Module):
     z = torch.randn(batchSize, nz).cuda(self.gpu)
     return z
 
+  # test_forward: content feature is from result of encoder, while attribute feature is sampled from N(0,1)
   def test_forward(self, image, a2b=True):
     self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
     if a2b:

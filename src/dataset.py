@@ -29,7 +29,7 @@ class dataset_single(data.Dataset):
     img = Image.open(img_name).convert('RGB')
     img = self.transforms(img)
     if input_dim == 1:
-      # rgb to grey, then unsqueeze the first dimension. The result shape is [1,C,H,W]
+      # rgb to grey, then unsqueeze the first dimension. The result shape is [1,H,W]
       img = img[0, ...] * 0.299 + img[1, ...] * 0.587 + img[2, ...] * 0.114
       img = img.unsqueeze(0)
     return img
