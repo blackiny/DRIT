@@ -5,6 +5,7 @@ from model import DRIT
 from saver import Saver
 
 def main():
+  torch.autograd.set_detect_anomaly(True)
   # parse options
   parser = TrainOptions()
   opts = parser.parse()
