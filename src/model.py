@@ -262,8 +262,8 @@ class DRIT(nn.Module):
     pred_real = netD.forward(real)
     loss_D = 0
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
-      out_fake = nn.functional.sigmoid(out_a)
-      out_real = nn.functional.sigmoid(out_b)
+      out_fake = torch.sigmoid(out_a)
+      out_real = torch.sigmoid(out_b)
       all0 = torch.zeros_like(out_fake).cuda(self.gpu)
       all1 = torch.ones_like(out_real).cuda(self.gpu)
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0)
@@ -276,8 +276,8 @@ class DRIT(nn.Module):
     pred_fake = self.disContent.forward(imageA.detach())
     pred_real = self.disContent.forward(imageB.detach())
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
-      out_fake = nn.functional.sigmoid(out_a)
-      out_real = nn.functional.sigmoid(out_b)
+      out_fake = torch.sigmoid(out_a)
+      out_real = torch.sigmoid(out_b)
       all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
       all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1)
@@ -304,7 +304,7 @@ class DRIT(nn.Module):
     self.enc_c_opt.step()
     self.gen_opt.step()
     '''
-    
+
     #combine two steps
     self.enc_c_opt.zero_grad()
     self.enc_a_opt.zero_grad()
@@ -370,7 +370,7 @@ class DRIT(nn.Module):
   def backward_G_GAN_content(self, data):
     outs = self.disContent.forward(data)
     for out in outs:
-      outputs_fake = nn.functional.sigmoid(out)
+      outputs_fake = torch.sigmoid(out)
       all_half = 0.5*torch.ones((outputs_fake.size(0))).cuda(self.gpu)
       ad_loss = nn.functional.binary_cross_entropy(outputs_fake, all_half)
     return ad_loss
@@ -379,7 +379,7 @@ class DRIT(nn.Module):
     outs_fake = netD.forward(fake)
     loss_G = 0
     for out_a in outs_fake:
-      outputs_fake = nn.functional.sigmoid(out_a)
+      outputs_fake = torch.sigmoid(out_a)
       all_ones = torch.ones_like(outputs_fake).cuda(self.gpu)
       loss_G += nn.functional.binary_cross_entropy(outputs_fake, all_ones)
     return loss_G
