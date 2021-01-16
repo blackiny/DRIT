@@ -5,7 +5,7 @@ from model import DRIT
 from saver import Saver
 
 def main():
-  torch.autograd.set_detect_anomaly(True)
+  cuda = True if torch.cuda.is_available() else False
   # parse options
   parser = TrainOptions()
   opts = parser.parse()
@@ -31,7 +31,8 @@ def main():
 
   # saver for display and output
   saver = Saver(opts)
-
+  # if graph displayed
+  graph_display = False
   # train
   print('\n--- train ---')
   max_it = 500000
@@ -52,15 +53,18 @@ def main():
         model.update_D(images_a, images_b)
         model.update_EG()
 
+      # save to display graph
+      if not graph_display:
+        saver.write_model_display(model = model)
+        graph_display = True
       # save to display file
-      if not opts.no_display_img:
-        saver.write_display(total_it, model)
+      saver.write_display(total_it, model, not opts.no_display_img, True)
 
       print('total_it: %d (ep %d, it %d), lr %08f' % (total_it, ep, it, model.gen_opt.param_groups[0]['lr']))
       total_it += 1
       if total_it >= max_it:
         saver.write_img(-1, model)
-        saver.write_model(-1, model)
+        saver.write_model(-1, total_it, model)
         break
 
     # decay learning rate
