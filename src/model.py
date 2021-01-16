@@ -117,7 +117,9 @@ class DRIT(nn.Module):
       output = self.gen.forward_a(self.z_content_b, self.z_attr_a)
     return output
 
-  def forward(self):
+  def forward(self, image_a, image_b):
+    self.input_A = image_a
+    self.input_B = image_b
     # input images
     half_size = 1
     real_A = self.input_A
@@ -198,7 +200,9 @@ class DRIT(nn.Module):
     else:
       self.z_attr_random_a, self.z_attr_random_b = self.enc_a.forward(self.fake_A_random, self.fake_B_random)
 
-  def forward_content(self):
+  def forward_content(self, image_a, image_b):
+    self.input_A = image_a
+    self.input_B = image_b
     half_size = 1
     self.real_A_encoded = self.input_A[0:half_size]
     self.real_B_encoded = self.input_B[0:half_size]
@@ -206,9 +210,9 @@ class DRIT(nn.Module):
     self.z_content_a, self.z_content_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded)
 
   def update_D_content(self, image_a, image_b):
-    self.input_A = image_a
-    self.input_B = image_b
-    self.forward_content()
+    # self.input_A = image_a
+    # self.input_B = image_b
+    self.forward_content(image_a, image_b)
     self.disContent_opt.zero_grad()
     loss_D_Content = self.backward_contentD(self.z_content_a, self.z_content_b)
     self.disContent_loss = loss_D_Content.item()
@@ -216,9 +220,9 @@ class DRIT(nn.Module):
     self.disContent_opt.step()
 
   def update_D(self, image_a, image_b):
-    self.input_A = image_a
-    self.input_B = image_b
-    self.forward()
+    # self.input_A = image_a
+    # self.input_B = image_b
+    self.forward(image_a, image_b)
 
     # update disA
     self.disA_opt.zero_grad()

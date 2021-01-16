@@ -56,8 +56,8 @@ class Saver():
         image_dis = torchvision.utils.make_grid(model.image_display, nrow=model.image_display.size(0)//2)/2 + 0.5
         self.writer.add_image('Image', image_dis, total_it)
 
-  def write_model_display(self, model):
-    self.writer.add_graph(model, verbose=False)
+  def write_model_display(self, model, input_images):
+    self.writer.add_graph(model, input_images, verbose=False)
 
   # save result images
   def write_img(self, ep, model):

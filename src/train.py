@@ -55,7 +55,7 @@ def main():
 
       # save to display graph
       if not graph_display:
-        saver.write_model_display(model = model)
+        saver.write_model_display(model = model, input_images=(images_a, images_b))
         graph_display = True
       # save to display file
       saver.write_display(total_it, model, not opts.no_display_img, True)
