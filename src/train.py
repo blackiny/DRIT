@@ -32,7 +32,7 @@ def main():
   # saver for display and output
   saver = Saver(opts)
   # if graph displayed
-  graph_display = False
+  # graph_display = False
   # train
   print('\n--- train ---')
   max_it = 500000
@@ -53,10 +53,10 @@ def main():
         model.update_D(images_a, images_b)
         model.update_EG()
 
-      # save to display graph
-      if not graph_display:
-        saver.write_model_display(model = model, input_images=(images_a, images_b))
-        graph_display = True
+      # save to display graph(can not because forward do not return any values)
+      # if not graph_display:
+      #   saver.write_model_display(model = model, input_images=(images_a, images_b))
+      #   graph_display = True
       # save to display file
       saver.write_display(total_it, model, not opts.no_display_img, True)
 
