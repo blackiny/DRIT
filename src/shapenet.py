@@ -4,6 +4,7 @@ import torch.utils.data as data
 from PIL import Image
 import random
 import numpy as np
+import json
 
 # class dataset_single(data.Dataset):
 #   def __init__(self, root_dir, input_dim=3, classes=[], transform=None):
