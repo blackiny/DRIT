@@ -40,7 +40,7 @@ import numpy as np
 #   def __len__(self):
 #     return self.dataset_size
 
-class dataset_unpair(data.Dataset):
+class shapenet_unpair(data.Dataset):
   def __init__(self, root_dir, input_dim=3, classes=[], transform=None):
     self.root_dir = root_dir
     self.classes = classes
