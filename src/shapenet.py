@@ -66,7 +66,7 @@ class shapenet_unpair(data.Dataset):
       n_class += 1
       models = self.get_model_names(_dir_path)
       for model in models:
-        imgs = self.get_img_names()
+        imgs = self.get_img_names(_dir, model)
         if cfg.TRAIN.RANDOM_NUM_VIEWS:
           curr_n_views = np.random.randint(min(n_views, len(imgs))) + 1
         else:
@@ -101,12 +101,12 @@ class shapenet_unpair(data.Dataset):
     return self.dataset_size
   
   def get_img_path(self, cat_id, model_id, img_name):
-    return os.path.join(self.root_dir, cat_id, model_id, img_name)
+    return os.path.join(self.root_dir, cat_id, model_id, 'rendering', img_name)
   
   def get_img_names(self, cat_id, model_id):
     result = []
-    meta_path = os.path.join(self.root_dir, cat_id, model_id, 'rendering_metadata.txt')
-    img_names = os.path.join(self.root_dir, cat_id, model_id, 'renderings.txt')
+    meta_path = os.path.join(self.root_dir, cat_id, model_id, 'rendering/rendering_metadata.txt')
+    img_names = os.path.join(self.root_dir, cat_id, model_id, 'rendering/renderings.txt')
     with open(img_names, 'r') as f:
       names = [line.strip() for line in f]
     with open(meta_path, 'r') as f:
@@ -117,7 +117,7 @@ class shapenet_unpair(data.Dataset):
       info = line.split()
       if len(info) != 5:
         continue
-      az, al = info[0], info[1]
+      az, al = float(info[0]), float(info[1])
       if az > cfg.TRAIN.AZIMUTH_RANGE and az < 360 - cfg.TRAIN.AZIMUTH_RANGE:
         continue
       if al > cfg.TRAIN.ALTITUDE_RANGE:
