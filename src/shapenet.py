@@ -114,7 +114,7 @@ class shapenet_unpair(data.Dataset):
     if len(names) != cfg.TRAIN.NUM_RENDERING or len(metas) != cfg.TRAIN.NUM_RENDERING:
       return False, result
     for i in range(cfg.TRAIN.NUM_RENDERING):
-      info = line.split()
+      info = metas[i].split()
       if len(info) != 5:
         continue
       az, al = float(info[0]), float(info[1])
