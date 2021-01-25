@@ -54,6 +54,7 @@ class shapenet_unpair(data.Dataset):
     cats = OrderedDict(sorted(cats.items(), key=lambda x: x[0]))
     imgs = []
     n_class = 0
+    n_model = 0
     n_views = cfg.TRAIN.N_VIEWS
     for _dir in os.listdir(root_dir):
       if _dir not in cats:
@@ -66,22 +67,23 @@ class shapenet_unpair(data.Dataset):
       n_class += 1
       models = self.get_model_names(_dir_path)
       for model in models:
-        ok, imgs = self.get_img_names(_dir, model)
+        ok, img_names = self.get_img_names(_dir, model)
         if not ok:
           continue
+        n_model += 1
         if cfg.TRAIN.RANDOM_NUM_VIEWS:
-          curr_n_views = np.random.randint(min(n_views, len(imgs))) + 1
+          curr_n_views = np.random.randint(min(n_views, len(img_names))) + 1
         else:
-          curr_n_views = min(n_views, len(imgs))
-        image_inds = np.random.choice(len(imgs), curr_n_views)
+          curr_n_views = min(n_views, len(img_names))
+        image_inds = np.random.choice(len(img_names), curr_n_views)
         for ind in image_inds:
-          img_path = self.get_img_path(_dir, model, imgs[ind])
+          img_path = self.get_img_path(_dir, model, img_names[ind])
           if os.path.isfile(img_path):
             imgs.append(img_path)
             self.inverse_d[img_path] = _dir
     self.imgs = imgs
     self.dataset_size = len(imgs)
-    print('load %d images for %d classes' %(len(imgs), n_class))
+    print('load %d images from %d models from %d classes' %(len(self.imgs), n_model, n_class))
 
   def __getitem__(self, index):
     data_A = self.load_img(self.imgs[index], self.input_dim)
