@@ -8,7 +8,7 @@ cfg = __C
 #
 # Common
 #
-__C.DATASET = '../dataset/shapenet_1000.json'
+__C.DATASET = '../datasets/shapenet_1000.json'
 
 
 #
