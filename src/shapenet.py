@@ -66,7 +66,9 @@ class shapenet_unpair(data.Dataset):
       n_class += 1
       models = self.get_model_names(_dir_path)
       for model in models:
-        imgs = self.get_img_names(_dir, model)
+        ok, imgs = self.get_img_names(_dir, model)
+        if not ok:
+          continue
         if cfg.TRAIN.RANDOM_NUM_VIEWS:
           curr_n_views = np.random.randint(min(n_views, len(imgs))) + 1
         else:
