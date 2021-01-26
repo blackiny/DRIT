@@ -49,10 +49,12 @@ class shapenet_unpair(data.Dataset):
     self.transform = transform
     self.input_dim = input_dim
     self.inverse_d = {}
+    self.class_range = {}
     #load cat info
     cats = json.load(open(cfg.DATASET))
     cats = OrderedDict(sorted(cats.items(), key=lambda x: x[0]))
     imgs = []
+    _ind = 0
     n_class = 0
     n_model = 0
     n_views = cfg.TRAIN.N_VIEWS
@@ -66,6 +68,7 @@ class shapenet_unpair(data.Dataset):
         continue
       n_class += 1
       models = self.get_model_names(_dir_path)
+      class_start_ind = _ind
       for model in models:
         ok, img_names = self.get_img_names(_dir, model)
         if not ok:
@@ -80,16 +83,23 @@ class shapenet_unpair(data.Dataset):
           img_path = self.get_img_path(_dir, model, img_names[ind])
           if os.path.isfile(img_path):
             imgs.append(img_path)
-            self.inverse_d[img_path] = _dir
+            self.inverse_d[_ind] = _dir
+            _ind += 1
+      class_end_ind = _ind - 1
+      self.class_range[_dir] = (class_start_ind, class_end_ind)
+      print('load %d images from %d models from class=%s, id=%s' %(
+        class_end_ind - class_start_ind + 1, len(models), cats[_dir]['cat'], _dir))
     self.imgs = imgs
     self.dataset_size = len(imgs)
-    print('load %d images from %d models from %d classes' %(len(self.imgs), n_model, n_class))
+    print('totally load %d images from %d models from %d classes' %(len(self.imgs), n_model, n_class))
 
   def __getitem__(self, index):
     data_A = self.load_img(self.imgs[index], self.input_dim)
+    class_A = self.inverse_d[index]
     rand_ind = -1
     while rand_ind < 0 or rand_ind == index:
-      rand_ind = random.randint(0, self.dataset_size - 1)
+      # rand_ind = random.randint(0, self.dataset_size - 1)
+      rand_ind = self.get_random_img_index(class_A)
     data_B = self.load_img(self.imgs[rand_ind], self.input_dim)
     return {"A": data_A, "B": data_B}
 
@@ -134,4 +144,15 @@ class shapenet_unpair(data.Dataset):
     model_names = [name for name in os.listdir(class_root)
                     if os.path.isdir(os.path.join(class_root, name))]
     return sorted(model_names)
+
+  def get_random_img_index(self, class_id):
+    class_start_ind, class_end_ind = self.class_range[class_id]
+    rd = random.random()
+    if rd <= cfg.TRAIN.INCLASS_PAIR_RATIO:
+      ind = random.randint(class_start_ind, class_end_ind)
+    else:
+      ind = random.randint(0, len(self.imgs) - class_end_ind + class_start_ind - 2)
+      if ind >= class_start_ind:
+        ind = ind + class_end_ind - class_start_ind + 1
+    return ind
 
