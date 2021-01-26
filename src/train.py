@@ -50,7 +50,8 @@ def main():
   print('\n--- train ---')
   max_it = 500000
   for ep in range(ep0, opts.n_ep):
-    for it, (images_a, images_b) in enumerate(train_loader):
+    for it, images in enumerate(train_loader):
+      images_a, images_b = images['A'], images['B']
       if images_a.size(0) != opts.batch_size or images_b.size(0) != opts.batch_size:
         continue
 
