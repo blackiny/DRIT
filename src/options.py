@@ -36,6 +36,7 @@ class TrainOptions():
     self.parser.add_argument('--resume', type=str, default=None, help='specified the dir of saved models for resume the training')
     self.parser.add_argument('--d_iter', type=int, default=3, help='# of iterations for updating content discriminator')
     self.parser.add_argument('--gpu', type=int, default=0, help='gpu')
+    self.parser.add_argument('--cfg_file', type=str, default=None, help='additional cfg file for dataset')
 
   def parse(self):
     self.opt = self.parser.parse_args()
