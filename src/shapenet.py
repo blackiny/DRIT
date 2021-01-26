@@ -43,9 +43,9 @@ from collections import OrderedDict
 #     return self.dataset_size
 
 class shapenet_unpair(data.Dataset):
-  def __init__(self, root_dir, input_dim=3, classes=[], transform=None):
+  def __init__(self, root_dir, input_dim=3, transform=None):
     self.root_dir = root_dir
-    self.classes = classes
+    self.classes = cfg.TRAIN.CLASSES.split(',')
     self.transform = transform
     self.input_dim = input_dim
     self.inverse_d = {}
@@ -61,7 +61,7 @@ class shapenet_unpair(data.Dataset):
     for _dir in os.listdir(root_dir):
       if _dir not in cats:
         continue
-      if classes and cats[_dir]['cat'] not in classes:
+      if self.classes and cats[_dir]['cat'] not in self.classes:
         continue
       _dir_path = os.path.join(root_dir, _dir)
       if not os.path.isdir(_dir_path):
@@ -143,7 +143,10 @@ class shapenet_unpair(data.Dataset):
   def get_model_names(self, class_root):
     model_names = [name for name in os.listdir(class_root)
                     if os.path.isdir(os.path.join(class_root, name))]
-    return sorted(model_names)
+    result = sorted(model_names)
+    if cfg.TRAIN.MAX_MODEL_PER_CLASS > 0 and len(result) > cfg.TRAIN.MAX_MODEL_PER_CLASS:
+      result = result[:cfg.TRAIN.MAX_MODEL_PER_CLASS]
+    return result
 
   def get_random_img_index(self, class_id):
     class_start_ind, class_end_ind = self.class_range[class_id]

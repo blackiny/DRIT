@@ -1,18 +1,31 @@
 import torch
 from options import TrainOptions
-from dataset import dataset_unpair
+from shapenet import shapenet_unpair
 from model import DRIT
 from saver import Saver
+import torchvision.transforms as transforms
+from torchvision.transforms import Compose, Resize, RandomCrop, CenterCrop, RandomHorizontalFlip, ToTensor, Normalize
+from PIL import Image
+from config import cfg, cfg_from_file
+import pprint
 
 def main():
   cuda = True if torch.cuda.is_available() else False
   # parse options
   parser = TrainOptions()
   opts = parser.parse()
-
+  # load cfg file
+  if opts.cfg_file:
+    cfg_from_file(opts.cfg_file)
+  print('\n--- dataset config ---')
+  pprint.pprint(cfg)
   # daita loader
   print('\n--- load dataset ---')
-  dataset = dataset_unpair(opts)
+  #dataset = dataset_unpair(opts)
+  transform = transforms.Compose([
+    Resize((opts.resize_size, opts.resize_size), Image.BICUBIC), CenterCrop(opts.crop_size), ToTensor(),
+     Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])])
+  dataset = shapenet_unpair(opts.dataroot, opts.input_dim_a, transform)
   train_loader = torch.utils.data.DataLoader(dataset, batch_size=opts.batch_size, shuffle=True, num_workers=opts.nThreads)
 
   # model
