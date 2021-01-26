@@ -94,11 +94,9 @@ class shapenet_unpair(data.Dataset):
     return {"A": data_A, "B": data_B}
 
   def load_img(self, img_name, input_dim):
-    img = Image.open(img_name)
+    # discard alpha channel
+    img = Image.open(img_name).convert('RGB')
     img = self.transform(img)
-    # If the image has alpha channel, remove it.
-    if img.size(0) > 3:
-      img = img[:3, ...]
     if input_dim == 1:
       img = img[0, ...] * 0.299 + img[1, ...] * 0.587 + img[2, ...] * 0.114
       img = img.unsqueeze(0)
