@@ -96,7 +96,7 @@ class shapenet_unpair(data.Dataset):
   def load_img(self, img_name, input_dim):
     img_raw = Image.open(img_name)
     # If the image has alpha channel, remove it.
-    img = np.array(img_raw)[:, :, :3].astype(float32)
+    img = np.array(img_raw)[:, :, :3].astype(np.float32)
     img = img / 255
     img = self.transform(img)
     if input_dim == 1:
