@@ -20,8 +20,11 @@ class Dis_content(nn.Module):
     self.model = nn.Sequential(*model)
 
   def forward(self, x):
+    print('Dis_content forward x size:', x.size())
     out = self.model(x)
+    print('Dis_content forward out size:', out.size())
     out = out.view(-1)
+    print('Dis_content forward out.view(-1) size:', out.size())
     outs = []
     outs.append(out)
     return outs
