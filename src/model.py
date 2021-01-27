@@ -279,7 +279,7 @@ class DRIT(nn.Module):
   def backward_contentD(self, imageA, imageB):
     print('backward_contentD imageA size:', imageA.size())
     pred_fake = self.disContent.forward(imageA.detach())
-    print('backward_contentD pred_fake size:', pred_fake.size())
+    print('backward_contentD pred_fake[0] size:', pred_fake[0].size())
     pred_real = self.disContent.forward(imageB.detach())
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
       print('backward_contentD out_a size:', out_a.size())
