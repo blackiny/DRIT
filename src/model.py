@@ -277,12 +277,17 @@ class DRIT(nn.Module):
     return loss_D
 
   def backward_contentD(self, imageA, imageB):
+    print('backward_contentD imageA size:', imageA.size())
     pred_fake = self.disContent.forward(imageA.detach())
+    print('backward_contentD pred_fake size:', pred_fake.size())
     pred_real = self.disContent.forward(imageB.detach())
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
+      print('backward_contentD out_a size:', out_a.size())
       out_fake = torch.sigmoid(out_a)
+      print('backward_contentD out_fake size:', out_fake.size())
       out_real = torch.sigmoid(out_b)
       all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
+      print('backward_contentD all1 size:', all1.size())
       all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1)
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0)

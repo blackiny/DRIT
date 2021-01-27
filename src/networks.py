@@ -49,10 +49,12 @@ class MultiScaleDis(nn.Module):
     return nn.Sequential(*model)
 
   def forward(self, x):
+    print('MultiScaleDis forward x size:', x.size())
     outs = []
     for Dis in self.Diss:
       outs.append(Dis(x))
       x = self.downsample(x)
+    print('MultiScaleDis forward outs[0] size:', outs[0].size())
     return outs
 
 class Dis(nn.Module):
@@ -81,8 +83,11 @@ class Dis(nn.Module):
     self.model.cuda(gpu)
 
   def forward(self, x_A):
+    print('Dis forward x_A size:', x_A.size())
     out_A = self.model(x_A)
+    print('Dis forward out_A size:', out_A.size())
     out_A = out_A.view(-1)
+    print('Dis forward out_A.view(-1) size:', out_A.size())
     outs_A = []
     outs_A.append(out_A)
     return outs_A
