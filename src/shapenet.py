@@ -5,6 +5,7 @@ from PIL import Image
 import random
 import numpy as np
 import json
+import sys
 from collections import OrderedDict
 
 # class dataset_single(data.Dataset):
@@ -46,6 +47,8 @@ class shapenet_unpair(data.Dataset):
   def __init__(self, root_dir, input_dim=3, transform=None):
     self.root_dir = root_dir
     self.classes = cfg.TRAIN.CLASSES.split(',')
+    if cfg.TRAIN.PAIR_EG and len(self.classes) != 2:
+      sys.exit("not valid input classes for Pair EG mode!")
     self.transform = transform
     self.input_dim = input_dim
     self.inverse_d = {}
@@ -89,6 +92,8 @@ class shapenet_unpair(data.Dataset):
       self.class_range[_dir] = (class_start_ind, class_end_ind)
       print('load %d images from %d models from class=%s, id=%s' %(
         class_end_ind - class_start_ind + 1, len(models), cats[_dir]['cat'], _dir))
+    if cfg.TRAIN.PAIR_EG and n_class != 2:
+      sys.exit("not valid dataset for Pair EG mode!")
     self.imgs = imgs
     self.dataset_size = len(imgs)
     print('totally load %d images from %d models from %d classes' %(len(self.imgs), n_model, n_class))
@@ -151,7 +156,7 @@ class shapenet_unpair(data.Dataset):
   def get_random_img_index(self, class_id):
     class_start_ind, class_end_ind = self.class_range[class_id]
     rd = random.random()
-    if rd <= cfg.TRAIN.INCLASS_PAIR_RATIO:
+    if not cfg.TRAIN.PAIR_EG and rd <= cfg.TRAIN.INCLASS_PAIR_RATIO:
       ind = random.randint(class_start_ind, class_end_ind)
     else:
       ind = random.randint(0, len(self.imgs) - class_end_ind + class_start_ind - 2)
