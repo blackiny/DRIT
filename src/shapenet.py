@@ -95,7 +95,12 @@ class shapenet_unpair(data.Dataset):
     if cfg.TRAIN.PAIR_EG and n_class != 2:
       sys.exit("not valid dataset for Pair EG mode!")
     self.imgs = imgs
-    self.dataset_size = len(imgs)
+    if cfg.TRAIN.PAIR_EG:
+      first_class = self.inverse_d[0]
+      start_ind, end_ind = self.class_range[first_class]
+      self.dataset_size = end_ind - start_ind + 1
+    else:
+      self.dataset_size = len(imgs)
     print('totally load %d images from %d models from %d classes' %(len(self.imgs), n_model, n_class))
 
   def __getitem__(self, index):
