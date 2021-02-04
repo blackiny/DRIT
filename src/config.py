@@ -31,6 +31,7 @@ __C.TRAIN.ALTITUDE_RANGE = 90
 __C.TRAIN.INCLASS_PAIR_RATIO = 0.3
 __C.TRAIN.MAX_MODEL_PER_CLASS = 2000
 __C.TRAIN.CLASSES = 'chair,table'
+__C.TRAIN.PAIR_EG = False # if one autoencoder for each domain
 
 
 def _merge_a_into_b(a, b):
